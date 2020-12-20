@@ -7,18 +7,19 @@
  */
 
 function onEdit(event) {
-  event.status = isUserGuessValid(event);
-  if (event.status.valid == true) {
-    /*
-    - get the array of correct guesses
-    - get the array of incorrect guesses
-    - get the remaining guesses
-    - determine if the user guess 
-    */
-  };
+  if (event.source.getActiveSheet().getName() == "Game") { // Checks to see if the 'Game' sheet is the one that was edited.
+    event.status = isUserGuessValid(event);
+    if (event.status.valid == true) {
+      /*
+      - get the array of correct guesses
+      - get the array of incorrect guesses
+      - get the remaining guesses
+      - determine if the user guess 
+      */
+    };
     
-  updateSheetWithGuessMessage(event);
-  
+    updateSheetWithGuessMessage(event);
+  };
 };
 
 
