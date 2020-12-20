@@ -29,7 +29,7 @@ function onEdit(event) {
 * Determines if the user entered a valid guess
 *
 * @param {object} event - The onEdit event object, include a message field.
-* @return {object} event - The onEdit even, populated with the bool for validit
+* @return {object} status - Status contains the validity of a guess, and the message to display to the user.
 *
 */
 
@@ -103,7 +103,6 @@ function updateSheetWithGuessMessage(event) {
 */
 
 function setCellToOldValue(event) {
-  Logger.log("Starting setCellToOldValue().");
   
   var editedRow = event.range.getRow();
   var editedColumn = event.range.getColumn();
@@ -112,7 +111,7 @@ function setCellToOldValue(event) {
   var oldCellRange = sheet.getRange(editedRow, editedColumn, 1, 1);
   oldCellRange.setValue(event.oldValue);
   
-  Logger.log("Updated row " + editedRow + " and column " + editedColumn + " to its previous value: " + event.oldValue);
+  Logger.log("Updated row " + editedRow + " / column " + editedColumn + " to its previous value: " + event.oldValue);
 };
 
 
