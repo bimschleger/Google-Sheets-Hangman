@@ -7,7 +7,8 @@
  */
 
 function onEdit(event) {
-  if (event.source.getActiveSheet().getName() == "Game") { // Checks to see if the 'Game' sheet is the one that was edited.
+  var activeSheet = event.source.getActiveSheet();
+  if (activeSheet.getName() == "Game") { // Checks to see if the 'Game' sheet is the one that was edited.
     event.status = isUserGuessValid(event);
     if (event.status.valid == true) {
       /*
@@ -33,7 +34,7 @@ function onEdit(event) {
 */
 
 function isUserGuessValid(event) {
-  Logger.log("Started isUserGuessValid.");
+  
   var editedRow = event.range.getRow();
   var editedColumn = event.range.getColumn();
   
@@ -43,7 +44,7 @@ function isUserGuessValid(event) {
   };
   
   if (editedRow == 2 && editedColumn == 2) {  // correct row and column
-    if (event.value == null) { // updated value back to zero
+    if (event.value == null) { // For example, deleting the value in a cell.
       status.message = null;
       status.valid = false;
     } else {
@@ -66,7 +67,7 @@ function isUserGuessValid(event) {
     setCellToOldValue(event);
   };
   
-  Logger.log(status.message);
+  Logger.log("Determined the following status: valid: " + status.valid + " and message: " + status.message);
   return status;
 };
 
@@ -80,7 +81,6 @@ function isUserGuessValid(event) {
 */
 
 function updateSheetWithGuessMessage(event) {
-  Logger.log("started updateSheetWithGuessMessage.");
   
   var messageRow = 2;
   var messageColumn = 3;
@@ -90,6 +90,7 @@ function updateSheetWithGuessMessage(event) {
   var message_range = sheet.getRange(messageRow, messageColumn, 1, 1);
   
   message_range.setValue(message);
+  Logger.log("Updated 'Game' sheet with the message: " + message);
 };
   
 
@@ -110,7 +111,69 @@ function setCellToOldValue(event) {
   
   var oldCellRange = sheet.getRange(editedRow, editedColumn, 1, 1);
   oldCellRange.setValue(event.oldValue);
+  
+  Logger.log("Updated row " + editedRow + " and column " + editedColumn + " to its previous value: " + event.oldValue);
 };
+
+
+/* 
+
+TODO:
+
+- get the word for the game (filter by 'active' in sheet 'Secret')
+- get correct guesses
+- get incorrect guesses
+- get remaining guesses
+- determine if guess is in word
+- if yes...
+   - add guess to correct guesses array
+   - sort array alpabetically
+   - get 'game' sheet, 
+   - make 'game' sheet active
+   - get range for 'correct guesses'
+   - set range for updated 'correct guesses'
+   - get word progress
+   - replace '?' with guess
+   - get range for progress
+   - set range for updates progress
+   - Is the word complete?
+      - If yes...
+         - Get congratulatory message
+         - set congratulatory message to message cell
+- if no...
+   - add guess to incorrect guesses array
+   - sort array alpabetically
+   - get 'game' sheet, 
+   - make 'game' sheet active
+   - get range for 'incorrect guesses'
+   - set range for updated 'incorrect guesses'
+   - get 'remaining guesses'
+   - decrement 'remaining guesses' by 1
+      - if 'remaining guesses' is now 0...
+         - Get 'you lost. Your word was "XXXXX". Click 'New game' in the top-tight to play again' message
+         - Set message to 'you lost' message
+      - if 'remaining guesses' is now >0...
+         - Set remaining guesses to updated 'remaining guesses' value
+- New game
+   - Create UI menu
+   - option in UI menu
+   - call newGame() when clicked
+   - get sheet 'Game'
+   - get range (2, 2, 5, 1) which is the game range
+   - clear contents of the range
+   - get 'guesses remaining' range
+   - set 'guesses remaining' range to 5
+   - get 'difficulty' range
+   - set 'difficulty' range to 'Easy'
+   - get the range for 'active' words
+   - clear the contents
+   - get all the words
+   - randomly select one
+   - set 'active' state to 1 for the selected word
+   - Convert word into ????? progress
+   - get ???? progress range
+   - set progress range to ?????
+         
 
   
 /* 
