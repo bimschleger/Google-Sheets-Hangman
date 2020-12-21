@@ -1,4 +1,4 @@
-function getCurentSecretWord() {
+function getCurrentSecretWord() {
   
   // Get the Secrets sheet
   var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
@@ -62,7 +62,7 @@ function secretWordObject() {
  *
  */
 
-function getRandomSecretWord() {
+function getNewSecretWord() {
   
   // Get the Secrets sheet
   var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
@@ -79,11 +79,10 @@ function getRandomSecretWord() {
   // Get secret words
   var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
   var secretWords = secretWordsRange.getValues();
-  Logger.log("Found " + secretWords.length + " secret words.");
-  
-  var inactiveSecretWords = [];
   
   // Get inactive words
+  var inactiveSecretWords = [];
+  
   secretWords.forEach(function(word) {
     if (word[3] == false) {
       inactiveSecretWords.push(word)
@@ -94,11 +93,7 @@ function getRandomSecretWord() {
   
   // Select a random inactive word
   var randomIndex = Math.floor(Math.random() * inactiveSecretWords.length);
-  Logger.log("Determined random index: " + randomIndex + ".");
-  
   var newRandomWord = inactiveSecretWords[randomIndex];
-  Logger.log("Determined random word from index: " + newRandomWord + ".");
-  
   
   // Assign the random word to the secretWord object
   var newSecretWord = secretWordObject();
@@ -106,10 +101,65 @@ function getRandomSecretWord() {
   newSecretWord.word = newRandomWord[1];
   newSecretWord.difficulty = newRandomWord[2];
   newSecretWord.active = newRandomWord[3];
-  Logger.log("Got a new random word: " + newSecretWord.word.toUpperCase() +".");
+  Logger.log("Selected a new random word: " + newSecretWord.word.toUpperCase() +".");
   
   return newSecretWord;
 };
+  
+
+/* 
+ *
+ * Deactivates the current secret word and activates the new secret word.
+ *
+ * @param {object} currentWord - The current secret word object, containing ID, word, difficulty, and active.
+ * @param {object} newWord - The new secret word object, containing ID, word, difficulty, and active.
+ *
+ */
+
+function updateSecretWords(currentWord, newWord) {
+  
+  // Get the Secrets sheet
+  var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
+  var ss = SpreadsheetApp.openById(spreadsheetId);
+  var sheetName = "Secret";
+  var sheet = ss.getSheetByName(sheetName);
+  
+  // Sheet variables
+  var firstRow = 2;
+  var numRows = sheet.getLastRow() - 1;
+  var firstColumn = 1;
+  var numColumns = sheet.getLastColumn();
+  
+  // Get secret words
+  var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
+  var secretWords = secretWordsRange.getValues();
+  
+  // Deactivate the current secret word and activate the new secret word
+  secretWords.forEach(function(secretWord) {
+    if (secretWord[0] == currentWord.id) {
+      secretWord[3] = false;
+    } else if (secretWord[0] == newWord.id) {
+      secretWord[3] = true;
+    }
+  });
+  
+  secretWordsRange.setValues(secretWords);
+  Logger.log("Updated " + currentWord.word.toUpperCase() + " to 'active = false'.");
+  Logger.log("Updated " + newWord.word.toUpperCase() + " to 'active = true'.");
+};
+
+
+/* 
+ *
+ * A helper function to test if updateSecretWords() works as expected.
+ *
+ */
+
+function demo() {
+  var currentWord = getCurrentSecretWord();
+  var newWord = getNewSecretWord();
+  updateSecretWords(currentWord, newWord);
+}
   
 
 /*
