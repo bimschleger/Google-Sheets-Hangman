@@ -16,6 +16,7 @@ function getCurrentSecretWord() {
   var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
   var secretWords = secretWordsRange.getValues();
   
+  // Create secretWord object
   var secretWord = secretWordObject();
   
   // Filter to find the active secret word
@@ -95,8 +96,10 @@ function getNewSecretWord() {
   var randomIndex = Math.floor(Math.random() * inactiveSecretWords.length);
   var newRandomWord = inactiveSecretWords[randomIndex];
   
-  // Assign the random word to the secretWord object
+  // Create new secret word object
   var newSecretWord = secretWordObject();
+  
+  // Assign the random word to the secretWord object
   newSecretWord.id = newRandomWord[0];
   newSecretWord.word = newRandomWord[1];
   newSecretWord.difficulty = newRandomWord[2];
