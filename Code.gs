@@ -8,6 +8,7 @@
 
 function onEdit(event) {
   var activeSheet = event.source.getActiveSheet();
+  
   if (activeSheet.getName() == "Game") { // Checks to see if the 'Game' sheet is the one that was edited.
     event.status = isUserGuessValid(event);
     if (event.status.valid == true) {
@@ -114,6 +115,11 @@ function setCellToOldValue(event) {
   Logger.log("Updated row " + editedRow + " / column " + editedColumn + " to its previous value: " + event.oldValue);
 };
 
+
+
+  
+  
+ 
 
 /* 
 
