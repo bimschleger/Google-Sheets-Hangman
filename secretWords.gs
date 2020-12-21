@@ -1,17 +1,25 @@
-function getSecretWord() {
+function getCurentSecretWord() {
   
-  var sheet = getSheetByName("Secret");
+  // Get the Secrets sheet
+  var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
+  var ss = SpreadsheetApp.openById(spreadsheetId);
+  var sheetName = "Secret";
+  var sheet = ss.getSheetByName(sheetName);
   
-  var secretWordsRange = getAllSecretWords();
-  var secretWord = {
-    "id": null,
-    "word": null,
-    "difficulty": null,
-    "active": null
-  };
+  // Sheet variables
+  var firstRow = 2;
+  var numRows = sheet.getLastRow() - 1;
+  var firstColumn = 1;
+  var numColumns = sheet.getLastColumn();
+  
+  // Get secret words
+  var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
+  var secretWords = secretWordsRange.getValues();
+  
+  var secretWord = secretWordObject();
   
   // Filter to find the active secret word
-  secretWordsRange.range.forEach(function(word) {
+  secretWords.forEach(function(word) {
     if (word[3] == true) {
       secretWord.id = word[0];
       secretWord.word = word[1];
@@ -19,9 +27,31 @@ function getSecretWord() {
       secretWord.active = word[3];
     }
   });
+  
   Logger.log("Got the secret word: " + secretWord.word.toUpperCase() + ".");
   return secretWord;
 };
+
+/*
+ *
+ * Defines a reusable secret word object
+ *
+ * @return (object) secretWord - The core secretWord object
+ *
+ */
+
+function secretWordObject() {
+  
+  secretWord = {
+    "id": null,
+    "word": null,
+    "difficulty": null,
+    "active": null
+  };
+  
+  return secretWord;
+};
+  
 
 /*
 
