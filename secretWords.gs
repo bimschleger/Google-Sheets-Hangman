@@ -65,32 +65,12 @@ function secretWordObject() {
 
 function getNewSecretWord() {
   
-  // Get the Secrets sheet
-  var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
-  var ss = SpreadsheetApp.openById(spreadsheetId);
-  var sheetName = "Secret";
-  var sheet = ss.getSheetByName(sheetName);
+  // Get secret word data
+  var secretWordsData = getSecretWordsData();
+  var secretWords = secretWordsData.values;
   
-  // Sheet variables
-  var firstRow = 2;
-  var numRows = sheet.getLastRow() - 1;
-  var firstColumn = 1;
-  var numColumns = sheet.getLastColumn();
-  
-  // Get secret words
-  var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
-  var secretWords = secretWordsRange.getValues();
-  
-  // Get inactive words
-  var inactiveSecretWords = [];
-  
-  secretWords.forEach(function(word) {
-    if (word[3] == false) {
-      inactiveSecretWords.push(word)
-      Logger.log("Added to the inactive secret words array: " + word + ".");
-    }
-  });
-  Logger.log("Found " + inactiveSecretWords.length + " inactive secret words.");
+  // Set inactive secret words
+  var inactiveSecretWords = getInactiveSecretWords(secretWords);
   
   // Select a random inactive word
   var randomIndex = Math.floor(Math.random() * inactiveSecretWords.length);
@@ -107,6 +87,31 @@ function getNewSecretWord() {
   Logger.log("Selected a new random word: " + newSecretWord.word.toUpperCase() +".");
   
   return newSecretWord;
+};
+
+
+/*
+ *
+ * Filters the list of all secret words and returns an array of inactive secret words.
+ *
+ * @param {array} secretWords - A two-dimersional array that contains all active and inactive secretWord.
+ * @return {array} inactiveSecretWords = An array that contains the inactive secret words.
+ *
+ */
+
+function getInactiveSecretWords(secretWords) {
+  var inactiveSecretWords = [];
+  
+  secretWords.forEach(function(word) {
+    if (word[3] == false) {  // word[3] is the 'active' value
+      inactiveSecretWords.push(word)
+      Logger.log("Added to the inactive secret words array: " + word + ".");
+    }
+  });
+  Logger.log("Found " + inactiveSecretWords.length + " inactive secret words.");
+  
+  return inactiveSecretWords;
+
 };
   
 
