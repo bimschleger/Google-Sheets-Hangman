@@ -125,6 +125,7 @@ function updateSecretWords(currentWord, newWord) {
     }
   });
   
+  // Update the range in the sheet with the modified active and inactive words
   secretWordsData.range.setValues(secretWords);
   Logger.log("Updated " + currentWord.word.toUpperCase() + " to 'active = false'.");
   Logger.log("Updated " + newWord.word.toUpperCase() + " to 'active = true'.");
