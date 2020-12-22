@@ -1,33 +1,17 @@
 function getCurrentSecretWord() {
   
-  // Get the Secrets sheet
-  var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
-  var ss = SpreadsheetApp.openById(spreadsheetId);
-  var sheetName = "Secret";
-  var sheet = ss.getSheetByName(sheetName);
-  
-  // Sheet variables
-  var firstRow = 2;
-  var numRows = sheet.getLastRow() - 1;
-  var firstColumn = 1;
-  var numColumns = sheet.getLastColumn();
-  
-  // Get secret words
-  var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
-  var secretWords = secretWordsRange.getValues();
-  
   // Create secretWord object
   var secretWord = secretWordObject();
   
-  // Filter to find the active secret word
-  secretWords.forEach(function(word) {
-    if (word[3] == true) {
-      secretWord.id = word[0];
-      secretWord.word = word[1];
-      secretWord.difficulty = word[2];
-      secretWord.active = word[3];
-    }
-  });
+  // Set inactive secret words
+  var activeSecretWords = getSecretWordsByActiveState(true);
+  var word = activeSecretWords[0];
+  
+  // Assign the active secret word to the secret word object
+  secretWord.id = word[0];
+  secretWord.word = word[1];
+  secretWord.difficulty = word[2];
+  secretWord.active = word[3];
   
   Logger.log("Got the secret word: " + secretWord.word.toUpperCase() + ".");
   return secretWord;
@@ -65,12 +49,8 @@ function secretWordObject() {
 
 function getNewSecretWord() {
   
-  // Get secret word data
-  var secretWordsData = getSecretWordsData();
-  var secretWords = secretWordsData.values;
-  
   // Set inactive secret words
-  var inactiveSecretWords = getInactiveSecretWords(secretWords);
+  var inactiveSecretWords = getSecretWordsByActiveState(false);
   
   // Select a random inactive word
   var randomIndex = Math.floor(Math.random() * inactiveSecretWords.length);
@@ -92,25 +72,31 @@ function getNewSecretWord() {
 
 /*
  *
- * Filters the list of all secret words and returns an array of inactive secret words.
+ * Filters the list of all secret words and returns an array of secret words for an active state.
  *
  * @param {array} secretWords - A two-dimersional array that contains all active and inactive secretWord.
- * @return {array} inactiveSecretWords = An array that contains the inactive secret words.
+ * @return {array} SecretWordsByState = An array that contains the secret words for the state defined in the parameter.
  *
  */
 
-function getInactiveSecretWords(secretWords) {
-  var inactiveSecretWords = [];
+function getSecretWordsByActiveState(activeState) {
   
+  // Get secret word data
+  var secretWordsData = getSecretWordsData();
+  var secretWords = secretWordsData.values;
+  
+  var SecretWordsByState = [];
+  
+  // Loop to identify the secret words by state
   secretWords.forEach(function(word) {
-    if (word[3] == false) {  // word[3] is the 'active' value
-      inactiveSecretWords.push(word)
-      Logger.log("Added to the inactive secret words array: " + word + ".");
+    if (word[3] == activeState) {  // word[3] is the 'active' value
+      SecretWordsByState.push(word)
+      Logger.log("Added to the 'active = " + activeState + "' secret words array: " + word + ".");
     }
   });
-  Logger.log("Found " + inactiveSecretWords.length + " inactive secret words.");
+  Logger.log("Found " + SecretWordsByState.length + " 'active = " + activeState + "' secret words.");
   
-  return inactiveSecretWords;
+  return SecretWordsByState;
 
 };
   
@@ -126,6 +112,7 @@ function getInactiveSecretWords(secretWords) {
 
 function updateSecretWords(currentWord, newWord) {
   
+  // Get secret word data
   var secretWordsData = getSecretWordsData();
   var secretWords = secretWordsData.values;
   
