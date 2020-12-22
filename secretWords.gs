@@ -121,21 +121,8 @@ function getNewSecretWord() {
 
 function updateSecretWords(currentWord, newWord) {
   
-  // Get the Secrets sheet
-  var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
-  var ss = SpreadsheetApp.openById(spreadsheetId);
-  var sheetName = "Secret";
-  var sheet = ss.getSheetByName(sheetName);
-  
-  // Sheet variables
-  var firstRow = 2;
-  var numRows = sheet.getLastRow() - 1;
-  var firstColumn = 1;
-  var numColumns = sheet.getLastColumn();
-  
-  // Get secret words
-  var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
-  var secretWords = secretWordsRange.getValues();
+  var secretWordsData = getSecretWordsData();
+  var secretWords = secretWordsData.values;
   
   // Deactivate the current secret word and activate the new secret word
   secretWords.forEach(function(secretWord) {
@@ -146,7 +133,7 @@ function updateSecretWords(currentWord, newWord) {
     }
   });
   
-  secretWordsRange.setValues(secretWords);
+  secretWordsData.range.setValues(secretWords);
   Logger.log("Updated " + currentWord.word.toUpperCase() + " to 'active = false'.");
   Logger.log("Updated " + newWord.word.toUpperCase() + " to 'active = true'.");
 };
@@ -163,6 +150,43 @@ function demo() {
   var newWord = getNewSecretWord();
   updateSecretWords(currentWord, newWord);
 }
+
+
+/* 
+ *
+ * Returns an object that contains the sheet, range, and values for all of the secret words.
+ *
+ * @return {object} secretWordsData - Contains the sheet, range, and values for all of the secret words.
+ *
+ */
+
+function getSecretWordsData() {
+  // Get the Secrets sheet
+  var spreadsheetId = "1w2nzUBTjH-UGYAY0mfrq_xWnRjg1IBrQ8oYCCNzOSBI";
+  var ss = SpreadsheetApp.openById(spreadsheetId);
+  var sheetName = "Secret";
+  var sheet = ss.getSheetByName(sheetName);
+  
+  // Sheet variables
+  var firstRow = 2;
+  var numRows = sheet.getLastRow() - 1;
+  var firstColumn = 1;
+  var numColumns = sheet.getLastColumn();
+  
+  // Get secret words
+  var secretWordsRange = sheet.getRange(firstRow, firstColumn, numRows, numColumns);
+  var secretWords = secretWordsRange.getValues();
+  
+  // Create an object that contains all of the secre words data
+  var secretWordsData = {
+    "spreadsheet": ss,
+    "sheet": sheet,
+    "range": secretWordsRange,
+    "values": secretWords
+  };
+  
+  return secretWordsData;
+}
   
 
 /*
@@ -170,12 +194,12 @@ function demo() {
 todo
 
 - on edit...
-   - get the secret word (sheet)
+   x get the secret word (sheet)
 - on new game...
-   - get the sheet(sheet)
-   - get the curent secret word
-   - get a random new secret word / return (sheet, word {id, name, difficulty, active})
-   - update the new secret word to be active (sheet, id, 
+   x get the sheet(sheet)
+   x get the curent secret word
+   x get a random new secret word / return (sheet, word {id, name, difficulty, active})
+   x update the new secret word to be active (sheet, id, 
    - Update the guess word to be ????
    - update the previous secret word to be inactive
    
