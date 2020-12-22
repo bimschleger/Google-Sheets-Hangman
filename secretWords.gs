@@ -85,18 +85,35 @@ function getSecretWordsByActiveState(activeState) {
   var secretWordsData = getSecretWordsData();
   var secretWords = secretWordsData.values;
   
-  var SecretWordsByState = [];
+  // Determine active state string for better readability
+  var activeStateString;
+  
+  if (activeState == true) {
+    activeStateString = 'active';
+  } else {
+    activeStateString = 'inactive';
+  };
+    
+  // Create empty array to hold all the secret words by state
+  var secretWordsByState = [];
   
   // Loop to identify the secret words by state
   secretWords.forEach(function(word) {
     if (word[3] == activeState) {  // word[3] is the 'active' value
-      SecretWordsByState.push(word)
-      Logger.log("Added to the 'active = " + activeState + "' secret words array: " + word + ".");
+      secretWordsByState.push(word)
+      Logger.log("Added to the " + activeStateString + " secret words array: " + word + ".");
     }
   });
-  Logger.log("Found " + SecretWordsByState.length + " 'active = " + activeState + "' secret words.");
   
-  return SecretWordsByState;
+  // Determine if we need the 's' for plurality in the log statement
+  var activeStatePlural = "";
+  if (secretWordsByState.length > 1) {
+    activeStatePlural = "s";
+  }
+  
+  Logger.log("Found " + secretWordsByState.length + " " + activeStateString + " secret word" + activeStatePlural + ".");
+  
+  return secretWordsByState;
 
 };
   
